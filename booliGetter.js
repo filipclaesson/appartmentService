@@ -3,15 +3,6 @@ var querystring = require('querystring');
 var fs = require('fs');
 
 
-// console.log(getQueryString(1,500,0,20170219, 20170219))
-
-
-// var handleData = function(data){
-// 	console.log("------------ heeeeeeeeej ------------ ")
-// 	console.log(data)
-// }
-// getBooliAppartments(20170219,20170219, handleData);
-
 
 function getAppartments(minDate, maxDate, callback){
 	url = getQueryString(1,500,0,minDate, maxDate);

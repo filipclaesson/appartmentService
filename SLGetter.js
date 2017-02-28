@@ -2,9 +2,6 @@
 // lon: '18.0904457', -----------------------------------------
 // lat: '59.2847233',
 
-module.exports = {
-  getDistance: getDistance
-}
 
 // https://www.trafiklab.se/api/sl-reseplanerare-2/dokumentation-sl-reseplanerare-2
 var http = require('http');
@@ -190,6 +187,9 @@ function calcTripMetrics(tripObject, lon, lat){
 	return trip
 }
 
+module.exports = {
+  calcDistVars: calcDistVars
+}
 
 
 
