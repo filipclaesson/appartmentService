@@ -1,9 +1,10 @@
 var booli = require('./booliGetter');
 var SL = require('./SLGetter');
+var Postgres = require('./postgres_caller');
+
 
 counter = 0;
 var Appartments = ""
-
 
 
 
@@ -14,9 +15,12 @@ var Appartments = ""
  */
 var saveSLData = function(SLdata){
 	//2 resp. response from SL api with distance variables
-	console.log('--- getting SL data gor booliApts: ' + (counter+1) + ' of ' + Appartments.length + ' ---')
-	Appartments[counter].distanceVariables = SLdata.variables
-	//console.log(data.variables)
+	if (SLdata.isSuccess){
+		console.log('--- getting SL data booliApts: ' + (counter+1) + ' of ' + Appartments.length + ' : Success')
+		Appartments[counter].distanceVariables = SLdata.variables
+	}else{
+		console.log('--- getting SL data booliApts: ' + (counter+1) + ' of ' + Appartments.length + ' : Success')
+	}
 	getNextDelay()
 }
 
@@ -25,17 +29,17 @@ var saveSLData = function(SLdata){
  * 			data: the array with distanceVariables
  */
 var SendBooliDataToSLAPI = function(booliAppartments){
-	// 1 resp. get booli data response (store the booli data in global variable)
-	console.log("Got" + booliAppartments.length + " appartments from booli");
+	console.log("--------------------------------------------------")
+	console.log("Step 2: Get response from Booli: " + booliAppartments.length + " apartments ...")
+	console.log("--------------------------------------------------")
 	Appartments = booliAppartments;
-	
 	if (Appartments.length > 0) {
-		console.log("sending booli data to SL");
-		//2. call SL api and get distance variables for first element (global variable counter = 0)
+		console.log("--------------------------------------------------")
+		console.log("Step 3: sending booli data to SL ...");
+		console.log("--------------------------------------------------")
 		SL.calcDistVars(Appartments[counter].lon, Appartments[counter].lat, 'apts', saveSLData);
 	}
 }
-
 
 function getNext(){
 	counter = counter + 1;
@@ -43,10 +47,14 @@ function getNext(){
 		var func = SL.calcDistVars(Appartments[counter].lon, Appartments[counter].lat, 'apts', saveSLData)
 	}
 	else{
-		// no more appartments -> save to postgresdb
-		console.log('KLAR!!!!!')
-		console.log(Appartments)
-		
+		console.log("--------------------------------------------------")
+		console.log("Step 4: SL Data Complete ...");
+		console.log("--------------------------------------------------")
+		console.log("--------------------------------------------------")
+		console.log(" Step 5: Send SL and Booli Data to DB ...");
+		console.log("--------------------------------------------------")
+		Postgres.insertMulti(Appartments, function(){console.log(" ------ Everything is finished ------")})
+
 	}	
 }
 
@@ -55,18 +63,21 @@ function getNextDelay(){
 }
 
 
-
 /*  ------  MAIN  ------
- * 1. get booli data between dates
- * 2. call SL api and get distance variables for first element
- * 3. s
- * 2b. Get SL data in each iteration and save to array
- * 3. Save the data to PostgresDatabase
+ * Step 1: Send data to Booli ...
+ * Step 2: Get response from Booli: 
+ * Step 3: sending booli data to SL ...
+ * Step 4: SL Data Complete ...
+ * Step 5: Send SL and Booli Data to DB ...
 */
 
-// Get Booli data between dates and execute 
-// 1. get booli data between dates
-booli.getAppartments(20170101,20170101, SendBooliDataToSLAPI);
+
+console.log("--------------------------------------------------")
+console.log("Step 1: Send data to Booli ...")
+console.log("--------------------------------------------------")
+// booli.getAppartments(process.argv[3],process.argv[3], SendBooliDataToSLAPI);
+booli.getAppartments(process.argv[2], process.argv[3], SendBooliDataToSLAPI);
+
 
 
 

@@ -7,10 +7,10 @@
 var http = require('http');
 
 function calcDistVars(lon, lat, name, callbackToBackend) {
-	console.log("lon: " + lon + ", lat: " + lat);
-    time = '08:00'
-    date = '2017-03-06'
-    maxWalkDist = '2000'
+    time = '08:00';
+    date = '2017-03-08';
+    maxWalkDist = '2000';
+    
     return http.get({
         host: 'api.sl.se',
         // path: 'http://api.sl.se/api2/TravelplannerV2/trip.json?key=0853354e0efc46e18c419cec9c393ada&originId=1595&destId=1002&searchForArrival=0'
@@ -24,10 +24,17 @@ function calcDistVars(lon, lat, name, callbackToBackend) {
         });
         response.on('end', function() {
             // Data recevied, do whatever with it!
+            
             var parsed = JSON.parse(body);
-            tripList = parsed.TripList.Trip;
-            // console.log(body)
-            createStructuredObjects(tripList, lon, lat, callbackToBackend);
+
+            if (parsed.TripList.errorCode == null){
+            	var parsed = JSON.parse(body);
+            	tripList = parsed.TripList.Trip;
+            	createStructuredObjects(tripList, lon, lat, callbackToBackend);	
+            }else{
+            	callbackToBackend({isSuccess: false})
+            }
+            
         });
     });
 }
@@ -47,6 +54,7 @@ function createStructuredObjects(tripList, lon, lat, callbackToBackend){
 			allSubTrips.push(trip.subTrips[i])
 		}
 	}
+	
 	variables = calcPositionVarables(trips_with_metrics, callbackToBackend)
 	// console.log(variables)
 	// console.log(trips_with_metrics)
@@ -78,6 +86,7 @@ function calcPositionVarables(tripList, callbackToBackend){
 			maxTime = trip.duration
 		}
 	}
+
 	departuresPerHour = tripList.length/((Math.abs(tripList[tripList.length-1].subTrips[tripList[tripList.length-1].subTrips.length-1].destTime)-Math.abs(tripList[0].subTrips[tripList[0].subTrips.length-1].destTime))/(60*60*1000))
 	avgTime = avgTime/tripList.length
 	avgWalkDist = avgWalkDist/tripList.length
@@ -100,7 +109,8 @@ function calcPositionVarables(tripList, callbackToBackend){
 	// console.log(positionVariables)
 	response = {
 		tripList: tripList,
-		variables: positionVariables
+		variables: positionVariables,
+		isSuccess: true
 	}
 	// console.log(response)
 	callbackToBackend(response)

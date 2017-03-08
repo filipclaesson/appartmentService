@@ -3,7 +3,6 @@ var querystring = require('querystring');
 var fs = require('fs');
 
 
-
 function getAppartments(minDate, maxDate, callback){
 	url = getQueryString(1,500,0,minDate, maxDate);
 	http.get(url, function (res) {
@@ -26,7 +25,6 @@ function getAppartments(minDate, maxDate, callback){
 }
 
 function getQueryString(areaCode, limit, offset, minDate, maxDate){
-  console.log("getQueryString - areaCode: " + areaCode + ", limit: " + limit + ", offset: " + offset);
   var crypto = require('crypto');
   var shasum = crypto.createHash('sha1');
   var auth2 = {};
@@ -64,6 +62,7 @@ function setupAptObject(aptIn){
 	    broker: aptIn.source.name,
 	    brokerId: aptIn.source.id,
 		brokerType: aptIn.source.type,
+		distanceVariables: []
 	}
 	return apt;
 }
