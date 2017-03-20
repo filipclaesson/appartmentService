@@ -8,7 +8,13 @@ var http = require('http');
 
 function calcDistVars(lon, lat, name, callbackToBackend) {
     time = '08:00';
-    date = '2017-03-08';
+    var d = new Date();
+    //console.log("måndag");
+    var monday = new Date(d.setDate(d.getDate() + (7-d.getDay())%7+1));
+    //console.log((monday.toISOString()).split('T')[0])
+    //console.log(monday.getFullYear() + "-" + (monday.getMonth() + 1) + "-" + (monday.getDate() + 1));
+
+    date = (monday.toISOString()).split('T')[0];
     maxWalkDist = '2000';
     
     return http.get({

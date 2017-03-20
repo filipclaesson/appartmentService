@@ -2,12 +2,8 @@ var booli = require('./booliGetter');
 var SL = require('./SLGetter');
 var Postgres = require('./postgres_caller');
 
-
 counter = 0;
 var Appartments = ""
-
-
-
 
 /* 
  * FuncationName: saveSLData - gets the SL data and saves it to an array
@@ -40,7 +36,6 @@ var SendBooliDataToSLAPI = function(booliAppartments){
 		SL.calcDistVars(Appartments[counter].lon, Appartments[counter].lat, 'apts', saveSLData);
 	}
 }
-
 function getNext(){
 	counter = counter + 1;
 	if (counter < Appartments.length){
@@ -54,14 +49,12 @@ function getNext(){
 		console.log(" Step 5: Send SL and Booli Data to DB ...");
 		console.log("--------------------------------------------------")
 		Postgres.insertMulti(Appartments, function(){console.log(" ------ Everything is finished ------")})
-
 	}	
 }
 
 function getNextDelay(){
 	setTimeout(getNext, 2000);
 }
-
 
 /*  ------  MAIN  ------
  * Step 1: Send data to Booli ...
@@ -71,15 +64,9 @@ function getNextDelay(){
  * Step 5: Send SL and Booli Data to DB ...
 */
 
-
 console.log("--------------------------------------------------")
 console.log("Step 1: Send data to Booli ...")
 console.log("--------------------------------------------------")
 // booli.getAppartments(process.argv[3],process.argv[3], SendBooliDataToSLAPI);
 booli.getAppartments(process.argv[2], process.argv[3], SendBooliDataToSLAPI);
-
-
-
-
-
 

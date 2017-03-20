@@ -4,7 +4,7 @@ var fs = require('fs');
 
 
 function getAppartments(minDate, maxDate, callback){
-	url = getQueryString(1,500,0,minDate, maxDate);
+	url = getQueryString("1,13,35,76,95",500,0,minDate, maxDate);
 	http.get(url, function (res) {
 		var body = "";
 		res.on('data', function(chunk) {
@@ -38,7 +38,12 @@ function getQueryString(areaCode, limit, offset, minDate, maxDate){
   var minDateString = "minSoldDate=" + minDate + "&";
   var maxDateString = "maxSoldDate=" + maxDate + "&";
   var url = "http://api.booli.se/sold?q="+ areaString + minDateString + maxDateString +  limitString + offsetString + querystring.stringify(auth2);
+  
   return url;
+  //http://api.booli.se/sold?q=1&minSoldDate=20170101&maxSoldDate=20170101&limit=500&offset=0&callerId=kopbostad&time=1489012408&unique=46d1e6076f6221c8&hash=0d25974f52c915acad2396bc40fad49df63a40f6
+
+  // Center med kvadrat ?? center=59.34674,18.0603&dim=500,500
+
 }
 
 function setupAptObject(aptIn){
