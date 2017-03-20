@@ -1,5 +1,17 @@
 var pg = require('pg');
 
+// -- postgres pass
+var pass;
+s = require('fs')
+fs.readFile('/home/pi/node_apps/postgres_pass.txt', 'utf8', function (err,data) {
+  if (err) {
+    return console.log(err);
+  }
+  pass = data;
+});
+// -- -- -- -- -- -- 
+
+
 promise = require('promise');
 var options = {
     promiseLib: promise
@@ -8,9 +20,9 @@ var pgp = require('pg-promise')(options);
 var cn = {
     host: 'localhost',
     port: 5432,
-    database: 'booliData',
-    user: 'postgres',
-    password: 'lagge'
+    database: 'postgres',
+    user: 'filip',
+    password: pass
 };
 
 function runQuery(query, callback) {
@@ -62,8 +74,8 @@ function insertMulti(dataIn, callback) {
 }
 
 function getInsertQuery(aptObject){
-    // queryString = "insert into apartments_test(booli_id, address, distance_to_ocean, areas, lon, lat, room, floor, sqm, listprice, price_up, sold_price, rent, construction_year, object_type, broker, broker_id, broker_type, avg_time_to_central, min_time_to_central, max_time_to_central, avg_commuting_walk_distance, min_commuting_walk_distance, max_commuting_walk_distance, avg_commuting_departures_per_hour) values($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24,$25)";
-    queryString = "insert into apartments_test(booli_id, address, distance_to_ocean, areas, lon, lat, room, floor, sqm, listprice, price_up, sold_price, rent, construction_year, object_type, broker, broker_id, broker_type, avg_time_to_central, min_time_to_central, max_time_to_central, avg_commuting_walk_distance, min_commuting_walk_distance, max_commuting_walk_distance, avg_commuting_departures_per_hour) select $1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24,$25 where not exists (select 1 from apartments_test a where a.booli_id = $1::text)";
+    // queryString = "insert into apartments(booli_id, address, distance_to_ocean, areas, lon, lat, room, floor, sqm, listprice, price_up, sold_price, rent, construction_year, object_type, broker, broker_id, broker_type, avg_time_to_central, min_time_to_central, max_time_to_central, avg_commuting_walk_distance, min_commuting_walk_distance, max_commuting_walk_distance, avg_commuting_departures_per_hour) values($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24,$25)";
+    queryString = "insert into apartments(booli_id, address, distance_to_ocean, areas, lon, lat, room, floor, sqm, listprice, price_up, sold_price, rent, construction_year, object_type, broker, broker_id, broker_type, avg_time_to_central, min_time_to_central, max_time_to_central, avg_commuting_walk_distance, min_commuting_walk_distance, max_commuting_walk_distance, avg_commuting_departures_per_hour) select $1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24,$25 where not exists (select 1 from apartments a where a.booli_id = $1::text)";
     data = [
     aptObject.booliId,
     aptObject.address,
