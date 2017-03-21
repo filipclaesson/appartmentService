@@ -24,6 +24,7 @@ var cn = {
     user: 'filip',
     password: pass
 };
+var db = pgp(cn);
 
 function runQuery(query, callback) {
     console.log('inne i qunQuery')
@@ -51,16 +52,14 @@ function runQuery(query, callback) {
 }
 
 function insertMulti(dataIn, callback) {
-    dataQueries = []; 
-    
-    var db = pgp(cn);
+    var dataQueries = []; 
+
+    for (i in dataIn) {
+	dataQueries.push(getInsertQuery(dataIn[i]));
+    }
+		
     db.tx(function(t) {
-        for (i in dataIn){
-            query = getInsertQuery(dataIn[i])
-            dataQueries.push(t.none(query[0], query[1]))
-        }
-        // this.ctx = transaction config + state context;
-        return t.batch(dataQueries);
+	return t.none(pgp.helpers.concat(dataQueries));
     })
     .then(function (data) {
         console.log("---------------------------------------")
@@ -103,7 +102,7 @@ function getInsertQuery(aptObject){
     aptObject.distanceVariables[0].max_walk,
     aptObject.distanceVariables[0].departures_per_hour
     ]
-    return [queryString, data];
+    return {query: queryString, values: data};
 }
 
 module.exports = {
