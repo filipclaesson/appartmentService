@@ -68,5 +68,8 @@ console.log("--------------------------------------------------")
 console.log("Step 1: Send data to Booli ...")
 console.log("--------------------------------------------------")
 // booli.getAppartments(process.argv[3],process.argv[3], SendBooliDataToSLAPI);
-booli.getAppartments(process.argv[2], process.argv[3], SendBooliDataToSLAPI);
+var startDate = process.argv[2].substr(0,4) + process.argv[2].substr(5,2) + process.argv[2].substr(8,2)
+var endDate = process.argv[3].substr(0,4) + process.argv[3].substr(5,2) + process.argv[3].substr(8,2)
+console.log(startDate + " " + endDate);
+//booli.getAppartments(process.argv[2], process.argv[3], SendBooliDataToSLAPI);
 
