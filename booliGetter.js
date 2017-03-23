@@ -47,10 +47,12 @@ function getQueryString(areaCode, limit, offset, minDate, maxDate){
 }
 
 function setupAptObject(aptIn){
+	
 	var apt = {
 		booliId: aptIn.booliId,
+		soldDate: aptIn.soldDate,
 		address: removeComma(aptIn.location.address['streetAddress']),
-		distanceToOcean: distanceToOcean(aptIn.location.distance),
+		
 		// distanceToOcean: aptIn.location.distance['ocean'],
 		areas: (aptIn.location.namedAreas).toString(),
 		lon: aptIn.location.position.longitude,
@@ -62,6 +64,7 @@ function setupAptObject(aptIn){
 	    priceUp: checkNumber(aptIn.soldPrice - aptIn.listPrice),
 	    soldPrice: checkNumber(aptIn.soldPrice),
 	    rent: checkNumber(aptIn.rent),
+	    distanceToOcean: distanceToOcean(aptIn.location.distance),
 	    constructionYear: checkNumber(aptIn.constructionYear),
 	    objectType: aptIn.objectType,
 	    broker: aptIn.source.name,
@@ -69,6 +72,7 @@ function setupAptObject(aptIn){
 		brokerType: aptIn.source.type,
 		distanceVariables: []
 	}
+	console.log(apt)
 	return apt;
 }
 

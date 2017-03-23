@@ -1,8 +1,8 @@
-CREATE TABLE apartments_test
+CREATE TABLE apartments
 (
 booli_id 				text,
+sold_date                              date,
 address 				text,
-distance_to_ocean 		double precision,
 areas 					text,
 lon 					double precision,
 lat 					double precision,
@@ -13,6 +13,7 @@ listprice 				double precision,
 price_up 				double precision,
 sold_price 				double precision,
 rent 					double precision,
+distance_to_ocean 		double precision,
 construction_year 		double precision,
 object_type 			text,
 broker 					text,
@@ -28,8 +29,9 @@ avg_commuting_departures_per_hour double precision
 )
 
 
-insert into apartments_test(
+insert into apartments(
 booli_id,
+sold_date,
 address,
 distance_to_ocean,
 areas,
@@ -57,6 +59,7 @@ avg_commuting_departures_per_hour
 )
 values(
 2235037,
+,'2017-01-01'
 'Sankt Eriksgatan 71',
 2243,
 'Vasastan',
