@@ -1,15 +1,15 @@
 var pg = require('pg');
 
 // -- postgres pass
-var pass;
-fs = require('fs')
-// fs.readFile('/home/pi/node_apps/postgres_pass.txt', 'utf8', function (err,data) {
-    fs.readFile('/Users/Filip/postgres_pass.txt', 'utf8', function (err,data) {
-  if (err) {
-    return console.log(err);
-  }
-  pass = data;
-});
+// var pass;
+// fs = require('fs')
+// // fs.readFile('/home/pi/node_apps/postgres_pass.txt', 'utf8', function (err,data) {
+//     fs.readFile('/Users/Filip/postgres_pass.txt', 'utf8', function (err,data) {
+//   if (err) {
+//     return console.log(err);
+//   }
+//   pass = data;
+// });
 // -- -- -- -- -- -- 
 
 
@@ -19,13 +19,7 @@ var options = {
 };
 var pgp = require('pg-promise')(options);
 //raspi
-var cn = {
-    host: 'localhost',
-    port: 5432,
-    database: 'postgres',
-    user: 'filip',
-    password: pass
-};
+
 // local
 // var cn = {
 //     host: 'localhost',
@@ -35,9 +29,30 @@ var cn = {
 //     password: "lagge"
 // };
 
-function runQuery(query, callback) {
+
+function getDB(){
+    var pass;
+    fs = require('fs')
+    // fs.readFile('/home/pi/node_apps/postgres_pass.txt', 'utf8', function (err,data) {
+        fs.readFile('/Users/Filip/postgres_pass.txt', 'utf8', function (err,data) {
+      if (err) {
+        return console.log(err);
+      }
+      pass = data;
+    });
+    var cn = {
+        host: 'localhost',
+        port: 5432,
+        database: 'postgres',
+        user: 'filip',
+        password: pass
+    };
+    return pgp(cn);
+}
+
+function runQuery(query,db, callback) {
     console.log('inne i qunQuery')
-	var db = pgp(cn);
+	//var db = pgp(cn);
 	db.any(query, [true])
     .then(function (data) {
         response = {
@@ -60,10 +75,9 @@ function runQuery(query, callback) {
     });
 }
 
-function insertMultiSLgeo(dataIn, callback) {
+function insertMultiSLgeo(dataIn, db, callback) {
     dataQueries = []; 
-    console.log(dataIn)
-    var db = pgp(cn);
+    //var db = pgp(cn);
     db.tx(function(t) {
         for (i in dataIn){
             query = getInsertQueryForSLGeo(dataIn[i])
@@ -74,7 +88,7 @@ function insertMultiSLgeo(dataIn, callback) {
     })
     .then(function (data) {
         console.log("---------------------------------------")
-        console.log("-- Step 6: Db finished with Success ..." );
+        console.log("-- Db finished with Success ..." );
         console.log("---------------------------------------")
         // success;
     })
@@ -83,10 +97,9 @@ function insertMultiSLgeo(dataIn, callback) {
     });
 }
 
-function insertMultiApartments(dataIn, callback) {
+function insertMultiApartments(dataIn, db,callback) {
     dataQueries = []; 
-    console.log(dataIn)
-    var db = pgp(cn);
+    //var db = pgp(cn);
     db.tx(function(t) {
         for (i in dataIn){
             query = getInsertQueryForApartments(dataIn[i])
@@ -153,5 +166,6 @@ function getInsertQueryForSLGeo(slObject){
 module.exports = {
   runQuery: runQuery,
   insertMultiSLgeo: insertMultiSLgeo,
-  insertMultiApartments: insertMultiApartments
+  insertMultiApartments: insertMultiApartments,
+  getDB:getDB
 };

@@ -1,6 +1,10 @@
 var booli = require('./booliGetter');
 var SL = require('./SLGetter');
 var Postgres = require('./postgres_caller');
+var pg = require('pg');
+
+
+var db = Postgres.getDB()
 
 counter = 0;
 var Apartments = "";
@@ -32,11 +36,12 @@ var SendBooliDataToSLAPI = function(booliApartments){
 	console.log("--------------------------------------------------")
 	Apartments = booliApartments;
 	if (Apartments.length > 0) {
-		Postgres.insertMultiApartments(Apartments, checkGeoPositionAndSendToSL())
+		console.log("--------------------------------------------------")
+		console.log("Step 3: store Booli data in DB ... count: " + Apartments.length);
+		console.log("--------------------------------------------------")
+		Postgres.insertMultiApartments(Apartments,db, checkGeoPositionAndSendToSL())
 		
-		console.log("--------------------------------------------------")
-		console.log("Step 3: sending booli data to SL ...");
-		console.log("--------------------------------------------------")
+		
 		
 	}
 }
@@ -47,13 +52,13 @@ function getNext(){
 	}
 	else{
 		console.log("--------------------------------------------------")
-		console.log("Step 4: SL Data Complete ...");
+		console.log("Step 5: SL Data Complete ...");
 		console.log("--------------------------------------------------")
 		console.log("--------------------------------------------------")
-		console.log(" Step 5: Send SL and Booli Data to DB ...");
+		console.log(" Step 6: Send SL  DB ...");
 		console.log("--------------------------------------------------")
 		
-		Postgres.insertMultiSLgeo(geoLocationsToLookup, function(){console.log(" ------ Everything is finished ------")})
+		Postgres.insertMultiSLgeo(geoLocationsToLookup,db, function(){console.log(" ------ Everything is finished ------")})
 	}	
 }
 
@@ -72,10 +77,10 @@ function getNextDelay(){
 console.log("--------------------------------------------------")
 console.log("Step 1: Send data to Booli ...")
 console.log("--------------------------------------------------")
-// booli.getApartments(process.argv[3],process.argv[3], SendBooliDataToSLAPI);
 var startDate = process.argv[2].substr(0,4) + process.argv[2].substr(5,2) + process.argv[2].substr(8,2)
 var endDate = process.argv[3].substr(0,4) + process.argv[3].substr(5,2) + process.argv[3].substr(8,2)
 console.log(startDate + " " + endDate);
+
 booli.getApartments(process.argv[2], process.argv[3], SendBooliDataToSLAPI);
 
 
@@ -86,20 +91,25 @@ function isLookupPosition(geopos, positionsToday){
 			isLookup = false;
 		}
 	}
-	console.log(isLookup)
 	return isLookup;
 }
 
 function checkGeoPositionAndSendToSL(callback){
-	Postgres.runQuery("select lon,lat from geo_data_sl limit 1000", function(data){
+	console.log("--------------------------------------------------")
+	console.log("Step 4: sending necessary booli data to SL ...");
+	console.log("--------------------------------------------------")
+	Postgres.runQuery("select lon,lat from geo_data_sl limit 1000", db, function(data){
 			for (i in Apartments){
 					appGeoPos = {lon: parseFloat(Apartments[i].lon).toFixed(3), lat: parseFloat(Apartments[i].lat).toFixed(3)};
 					if (isLookupPosition(appGeoPos, data.data)){
 						geoLocationsToLookup.push(appGeoPos);
 					}
-				}
+			}
+			console.log("Geolocation to send to SL count: " + geoLocationsToLookup.lenght)
 			console.log(geoLocationsToLookup)
-			SL.calcDistVars(geoLocationsToLookup[counter].lon, geoLocationsToLookup[counter].lat, 'apts', saveSLData);
+			if (geoLocationsToLookup.length > 0){
+				SL.calcDistVars(geoLocationsToLookup[counter].lon, geoLocationsToLookup[counter].lat, 'apts', saveSLData);
+			}
 	})
 
 }
