@@ -98,7 +98,7 @@ function checkGeoPositionAndSendToSL(callback){
 	console.log("--------------------------------------------------")
 	console.log("Step 4: sending necessary booli data to SL ...");
 	console.log("--------------------------------------------------")
-	Postgres.runQuery("select lon,lat from geo_data_sl limit 1000", db, function(data){
+	Postgres.runQuery("select lon,lat from geo_data_sl", db, function(data){
 			for (i in Apartments){
 					appGeoPos = {lon: parseFloat(Apartments[i].lon).toFixed(3), lat: parseFloat(Apartments[i].lat).toFixed(3)};
 					if (isLookupPosition(appGeoPos, data.data)){
