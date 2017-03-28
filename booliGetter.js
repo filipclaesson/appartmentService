@@ -72,6 +72,7 @@ function setupAptObject(aptIn){
 		brokerType: aptIn.source.type,
 		distanceVariables: []
 	}
+
 	return apt;
 }
 
